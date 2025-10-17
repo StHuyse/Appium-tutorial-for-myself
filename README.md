@@ -1,4 +1,4 @@
-﻿# STEP BY STEP TO START AN AUTOMATION PROJECT
+﻿# STEP-BY-STEP GUIDE TO SETTING UP AN AUTOMATION PROJECT
 0. Download and install IDE: VS code, make sure you downloaded and setup nodejs, npm(search google for more information :D). Check node and npm version
 
 bash:
@@ -108,5 +108,6 @@ After installing the CLI, you can then run the configuration wizard:
 Bash:
 
     npx wdio config
+
 
 
