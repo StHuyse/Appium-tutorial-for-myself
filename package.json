@@ -1,16 +1,37 @@
 {
   "name": "mobile-automation-test-tutorial",
   "version": "1.0.0",
+  "description": "Appium + WebdriverIO + Mocha + Babel setup",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "wdio": "wdio run ./wdio.conf.js"
+    "test": "npx wdio run ./wdio.conf.js",
+    "test:login": "npx wdio run ./wdio.conf.js --spec ./test/specs/login.test.js",
+    "test:headless": "npx wdio run ./wdio.conf.js --headless",
+    "test:quit-after": "cross-env QUIT_AFTER_TEST=true npx wdio run ./wdio.conf.js",
+    "test:keep-session": "cross-env KEEP_SESSION=true npx wdio run ./wdio.conf.js",
+    "test:no-allure": "cross-env GENERATE_ALLURE=false npx wdio run ./wdio.conf.js",
+    "test:debug": "cross-env DEBUG_MODE=true npx wdio run ./wdio.conf.js",
+    "allure:generate": "npx allure generate ./allure-results --clean -o ./allure-report",
+    "allure:open": "npx allure open ./allure-report",
+    "allure:serve": "npx allure serve ./allure-results",
+    "test:interactive": "node scripts/testRunner.js",
+    "appium:start": "appium",
+    "appium:doctor": "appium-doctor"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "appium",
+    "webdriverio",
+    "mocha",
+    "automation",
+    "mobile"
+  ],
+  "author": "Thuc_Toan",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
+    "@babel/cli": "^7.28.3",
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/register": "^7.28.3",
     "@wdio/allure-reporter": "^9.20.0",
     "@wdio/appium-service": "^9.20.0",
     "@wdio/cli": "^9.20.0",
@@ -18,7 +39,12 @@
     "@wdio/mocha-framework": "^9.20.0",
     "@wdio/spec-reporter": "^9.20.0",
     "@wdio/visual-service": "^9.0.0",
-    "appium-uiautomator2-driver": "^5.0.5"
+    "allure-commandline": "^2.34.1",
+    "appium": "^2.19.0",
+    "appium-doctor": "^1.16.2",
+    "appium-uiautomator2-driver": "^4.2.9",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "cross-env": "^10.1.0"
   },
   "dependencies": {
     "webdriverio": "^9.20.0"

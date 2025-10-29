@@ -1,3 +1,6 @@
+// Enable Babel transpiling
+require('@babel/register');
+
 exports.config = {
     //
     // ====================
@@ -44,19 +47,29 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 100,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        // capabilities for local Appium web tests on an Android Emulator
+        // capabilities for local Appium app test on real Android device.
         platformName: 'Android',
-        browserName: 'Chrome',
-        'appium:deviceName': 'Android GoogleAPI Emulator',
-        'appium:platformVersion': '12.0',
-        'appium:automationName': 'UiAutomator2'
+        'appium:deviceName': 'Android Devices',
+        'appium:automationName': 'UiAutomator2',
+        'appium:unicodeKeyboard': true,
+        'appium:resetKeyboard': true,
+        'appium:skipServerInstallation': true,
+        'appium:skipDeviceInitialization': true,
+        'appium:app': './apps/Fire_Social_Media.apk',
+        'appium:appPackage': 'com.minhtu.firesocialmedia',
+        'appium:appActivity': 'com.minhtu.firesocialmedia.android.MainActivity',
+        'appium:autoGrantPermissions': true,
+        'appium:noReset': false,
+        'appium:fullReset': true,
+        'appium:newCommandTimeout': 300,
+        'appium:androidInstallTimeout': 90000
     }],
 
     //
@@ -67,6 +80,9 @@ exports.config = {
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'info',
+    //bonus
+    // path: '/wd/hub',
+    // host: 'localhost',
     //
     // Set specific log levels per logger
     // loggers:
@@ -106,7 +122,7 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['appium', 'visual'],
+    services: ['appium'],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -129,12 +145,23 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec',['allure', {outputDir: 'allure-results'}]],
+    reporters: [
+        'spec',
+        ['allure', {
+            outputDir: './allure-results',
+            disableWebdriverStepsReporting: false,
+            disableWebdriverScreenshotsReporting: false,
+            useCucumberStepReporter: false,
+            addConsoleLogs: true,
+            addScreenshots: true
+        }]
+    ],
 
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
+        require: ['./node_modules/@babel/register', './test/setup.js'],
         timeout: 60000
     },
 
@@ -151,8 +178,10 @@ exports.config = {
      * @param {object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onPrepare: function (config, capabilities) {
-    // },
+    onPrepare: function (config, capabilities) {
+        console.log('🚀 Starting test execution...');
+        console.log('📊 Allure reporting: Enabled');
+    },
     /**
      * Gets executed before a worker process is spawned and can be used to initialize specific service
      * for that worker as well as modify runtime environments in an async fashion.
@@ -181,8 +210,21 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      * @param {string} cid worker id (e.g. 0-0)
      */
-    // beforeSession: function (config, capabilities, specs, cid) {
-    // },
+    beforeSession: function (config, capabilities, specs, cid) {
+        // Load session configuration
+        const { sessionConfig } = require('./config/sessionConfig.js');
+        
+        // Store session config globally for use in other hooks
+        global.sessionConfig = sessionConfig;
+        
+        if (sessionConfig.quitAfterTest) {
+            console.log('⚠️  Session will be terminated after each test');
+        } else if (sessionConfig.keepSession) {
+            console.log('🔄 Session will be kept alive between tests');
+        } else {
+            console.log('📋 Default session behavior (terminate after test suite)');
+        }
+    },
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
@@ -190,8 +232,18 @@ exports.config = {
      * @param {Array.<String>} specs        List of spec file paths that are to be run
      * @param {object}         browser      instance of created browser/device session
      */
-    // before: function (capabilities, specs) {
-    // },
+    before: function (capabilities, specs) {
+        // Show session status when starting tests
+        if (global.sessionConfig) {
+            if (global.sessionConfig.keepSession) {
+                console.log('🔄 Using existing session (keep session mode)');
+            } else if (global.sessionConfig.quitAfterTest) {
+                console.log('⚠️  Starting new session (quit after test mode)');
+            } else {
+                console.log('📋 Starting new session (default mode)');
+            }
+        }
+    },
     /**
      * Runs before a WebdriverIO command gets executed.
      * @param {string} commandName hook command name
@@ -233,8 +285,21 @@ exports.config = {
      * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
     afterTest: async function(test, context, { error, result, duration, passed, retries }) {
+        // Take screenshot on failure
         if (!passed) {
             await browser.takeScreenshot();
+            console.log('📸 Screenshot taken due to test failure');
+        }
+        
+        // Session control: quit after each test if configured
+        if (global.sessionConfig && global.sessionConfig.quitAfterTest) {
+            console.log('🛑 Terminating session after test...');
+            return browser.deleteSession();
+        } else if (global.sessionConfig && global.sessionConfig.keepSession) {
+            console.log('🔄 Keeping session alive for next test...');
+            // Don't delete session - keep it alive
+        } else {
+            console.log('📋 Default behavior: session will be terminated after test suite');
         }
     },
 
@@ -279,8 +344,32 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    // onComplete: function(exitCode, config, capabilities, results) {
-    // },
+    onComplete: function(exitCode, config, capabilities, results) {
+        console.log('✅ Test execution completed');
+        
+        // Generate Allure report if enabled
+        const sessionConfig = global.sessionConfig || require('./config/sessionConfig.js').sessionConfig;
+        if (sessionConfig.generateAllureReport) {
+            console.log('📊 Generating Allure report...');
+            try {
+                const allure = require('allure-commandline');
+                const generation = allure(['generate', sessionConfig.allureResultsDir, '--clean', '-o', sessionConfig.allureReportDir]);
+                return new Promise((resolve, reject) => {
+                    generation.on('exit', function (exitCode) {
+                        if (exitCode === 0) {
+                            console.log(`✅ Allure report generated: ${sessionConfig.allureReportDir}/index.html`);
+                            resolve();
+                        } else {
+                            console.log('❌ Could not generate Allure report');
+                            reject(new Error('Allure generation failed with exit code ' + exitCode));
+                        }
+                    });
+                });
+            } catch (error) {
+                console.log('❌ Failed to generate Allure report:', error.message);
+            }
+        }
+    },
     /**
     * Gets executed when a refresh happens.
     * @param {string} oldSessionId session ID of the old session
