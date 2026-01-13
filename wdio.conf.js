@@ -62,7 +62,7 @@ exports.config = {
         'appium:resetKeyboard': true,
         'appium:skipServerInstallation': true,
         'appium:skipDeviceInitialization': true,
-        'appium:app': './apps/Fire_Social_Media.apk',
+        'appium:app': './apps/Fire_Social_Media-release-v5.2.apk',
         'appium:appPackage': 'com.minhtu.firesocialmedia',
         'appium:appActivity': 'com.minhtu.firesocialmedia.android.MainActivity',
         'appium:autoGrantPermissions': true,

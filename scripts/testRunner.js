@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
-const readline = require('readline');
+import { execSync } from'child_process';
+
+import readline from 'readline';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -35,8 +36,9 @@ async function runTests() {
   console.log('7. Generate Allure report only');
   console.log('8. Open Allure report');
   console.log('9. Exit\n');
+  console.log('10.Run signup tests only');
 
-  const choice = await askQuestion('Select an option (1-9): ');
+  const choice = await askQuestion('Select an option (1-10): ');
 
   switch (choice) {
     case '1':
@@ -84,6 +86,11 @@ async function runTests() {
       rl.close();
       return;
     
+    case '10':
+      console.log('\n🔐 Running sign up tests only...\n');
+      execSync('npm run test:signup', { stdio: 'inherit' });
+      break;
+
     default:
       console.log('\n❌ Invalid option. Please try again.\n');
       await runTests();

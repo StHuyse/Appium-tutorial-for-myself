@@ -1,11 +1,11 @@
-export const testData = {
+export const userData = {
   validUser: {
-    email: 'khua01@gmail.com',
+    email: 'test123@gmail.com',
     password: '123456'
   },
   invalidUser: {
     email: 'invalid.com',
-    password: 'wrongpassword'
+    password: '12345'
   },
   emptyCredentials: {
     email: '',
@@ -13,6 +13,9 @@ export const testData = {
   }
 };
 
+export const nickname ={
+  username : 'TestAutomation1'
+} 
 export const appConfig = {
   appPackage: 'com.minhtu.firesocialmedia',
   appActivity: 'com.minhtu.firesocialmedia.android.MainActivity',
@@ -26,4 +29,12 @@ export const timeouts = {
   short: 5000,
   medium: 10000,
   long: 30000
+};
+
+export const postContentOnly = {
+  content: 'test post content only'
+};
+
+export const commentContentOnly = {
+  content: 'test comment'
 };

@@ -1,11 +1,17 @@
 {
+  
   "name": "mobile-automation-test-tutorial",
   "version": "1.0.0",
+  "type": "module", 
+  "imports": {
+    "#roots/*": "./*"
+  },
   "description": "Appium + WebdriverIO + Mocha + Babel setup",
   "main": "index.js",
   "scripts": {
     "test": "npx wdio run ./wdio.conf.js",
     "test:login": "npx wdio run ./wdio.conf.js --spec ./test/specs/login.test.js",
+    "test:signup": "npx wdio run ./wdio.conf.js --spec ./test/specs/signup.test.js",
     "test:headless": "npx wdio run ./wdio.conf.js --headless",
     "test:quit-after": "cross-env QUIT_AFTER_TEST=true npx wdio run ./wdio.conf.js",
     "test:keep-session": "cross-env KEEP_SESSION=true npx wdio run ./wdio.conf.js",
@@ -47,6 +53,7 @@
     "cross-env": "^10.1.0"
   },
   "dependencies": {
+    "axios": "^1.13.2",
     "webdriverio": "^9.20.0"
   }
 }

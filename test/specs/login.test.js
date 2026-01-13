@@ -1,5 +1,5 @@
-import LoginPage from '#roots/pages/login_page';
-import { testData } from '#roots/config/testData.js';
+import LoginPage from '#roots/pages/login_page.js';
+import { userData } from '#roots/config/testData.js';
 
 describe('Login test', () => {
   let loginPage;
@@ -10,7 +10,7 @@ describe('Login test', () => {
 
   it('should log in successfully with valid credentials', async () => {
     await loginPage.handlePermission();
-    await loginPage.login(testData.validUser.email, testData.validUser.password);
+    await loginPage.login(userData.validUser.email, userData.validUser.password);
     
     // Add assertion to verify successful login
     // You can add verification for successful login elements here
