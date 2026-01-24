@@ -1,7 +1,7 @@
 {
   
-  "name": "mobile-automation-test-tutorial",
-  "version": "1.0.0",
+  "name": "firesocialmedia-automation-testing",
+  "version": "1.1.0",
   "type": "module", 
   "imports": {
     "#roots/*": "./*"

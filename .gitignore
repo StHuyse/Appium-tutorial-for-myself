@@ -3,3 +3,8 @@ package-lock.json
 allure-results
 allure-report
 realtimeData.js
+Appium_inspector_session
+PersonalPage
+SettingPage
+post.test.js
+login.test.js

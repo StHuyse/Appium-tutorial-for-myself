@@ -1,4 +1,4 @@
-import LoginPage from '#roots/pages/login_page.js';
+import LoginPage from '#roots/pages/Authentication/signup_page.js';
 import { userData } from '#roots/config/testData.js';
 
 describe('Login test', () => {

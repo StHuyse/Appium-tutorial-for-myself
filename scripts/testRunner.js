@@ -9,7 +9,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-console.log('🚀 Mobile Automation Test Runner');
+console.log('Mobile Automation Test Runner');
 console.log('================================\n');
 //syntax Promise
 // if (window.Promise) { // Check if the browser supports Promises
@@ -37,8 +37,10 @@ async function runTests() {
   console.log('8. Open Allure report');
   console.log('9. Exit\n');
   console.log('10.Run signup tests only');
+  console.log('11. Run tests by flow (Sign In / Sign Up)');
 
-  const choice = await askQuestion('Select an option (1-10): ');
+
+  const choice = await askQuestion('Select an option (1-11): ');
 
   switch (choice) {
     case '1':
@@ -91,8 +93,24 @@ async function runTests() {
       execSync('npm run test:signup', { stdio: 'inherit' });
       break;
 
+    case '11':
+      console.log('\n Select Flow:');
+      console.log('1. Sign In Flow');
+      console.log('2. Sign Up Flow\n');
+      if (flowChoice === '1') {
+        console.log('\n Running Sign In flow tests...\n');
+        execSync('npm run test:login', { stdio: 'inherit' });
+      } else if (flowChoice === '2') {
+        console.log('\n Running Sign Up flow tests...\n');
+        execSync('npm run test:signup', { stdio: 'inherit' });
+      } else {
+        console.log('\n Invalid flow option.\n');
+        await runTests();
+        return;
+      }
+      break;
     default:
-      console.log('\n❌ Invalid option. Please try again.\n');
+      console.log('\n Invalid option. Please try again.\n');
       await runTests();
       return;
   }

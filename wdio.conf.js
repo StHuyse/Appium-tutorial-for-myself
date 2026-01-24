@@ -55,7 +55,7 @@ exports.config = {
     //
     capabilities: [{
         // capabilities for local Appium app test on real Android device.
-        platformName: 'Android',
+        'platformName': 'Android',
         'appium:deviceName': 'Android Devices',
         'appium:automationName': 'UiAutomator2',
         'appium:unicodeKeyboard': true,
@@ -179,8 +179,8 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      */
     onPrepare: function (config, capabilities) {
-        console.log('🚀 Starting test execution...');
-        console.log('📊 Allure reporting: Enabled');
+        console.log(' Starting test execution...');
+        console.log(' Allure reporting: Enabled');
     },
     /**
      * Gets executed before a worker process is spawned and can be used to initialize specific service
@@ -218,11 +218,11 @@ exports.config = {
         global.sessionConfig = sessionConfig;
         
         if (sessionConfig.quitAfterTest) {
-            console.log('⚠️  Session will be terminated after each test');
+            console.log('Session will be terminated after each test');
         } else if (sessionConfig.keepSession) {
-            console.log('🔄 Session will be kept alive between tests');
+            console.log('Session will be kept alive between tests');
         } else {
-            console.log('📋 Default session behavior (terminate after test suite)');
+            console.log(' Default session behavior (terminate after test suite)');
         }
     },
     /**
@@ -236,11 +236,11 @@ exports.config = {
         // Show session status when starting tests
         if (global.sessionConfig) {
             if (global.sessionConfig.keepSession) {
-                console.log('🔄 Using existing session (keep session mode)');
+                console.log('Using existing session (keep session mode)');
             } else if (global.sessionConfig.quitAfterTest) {
-                console.log('⚠️  Starting new session (quit after test mode)');
+                console.log(' Starting new session (quit after test mode)');
             } else {
-                console.log('📋 Starting new session (default mode)');
+                console.log('Starting new session (default mode)');
             }
         }
     },
