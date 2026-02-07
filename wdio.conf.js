@@ -47,7 +47,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 100,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -62,12 +62,12 @@ exports.config = {
         'appium:resetKeyboard': true,
         'appium:skipServerInstallation': true,
         'appium:skipDeviceInitialization': true,
-        'appium:app': './apps/Fire_Social_Media-release-v5.2.apk',
+        'appium:app': './apps/Fire_Social_Media-release-v5.2.0.apk',
         'appium:appPackage': 'com.minhtu.firesocialmedia',
         'appium:appActivity': 'com.minhtu.firesocialmedia.android.MainActivity',
         'appium:autoGrantPermissions': true,
         'appium:noReset': false,
-        'appium:fullReset': true,
+        'appium:fullReset': false,
         'appium:newCommandTimeout': 300,
         'appium:androidInstallTimeout': 90000
     }],
@@ -284,24 +284,19 @@ exports.config = {
      * @param {boolean} result.passed    true if test has passed, otherwise false
      * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-    afterTest: async function(test, context, { error, result, duration, passed, retries }) {
-        // Take screenshot on failure
+    afterTest: async function(test, context, { error, passed }) {
+
         if (!passed) {
             await browser.takeScreenshot();
-            console.log('📸 Screenshot taken due to test failure');
+            console.log('Screenshot taken due to test failure');
         }
-        
-        // Session control: quit after each test if configured
-        if (global.sessionConfig && global.sessionConfig.quitAfterTest) {
-            console.log('🛑 Terminating session after test...');
-            return browser.deleteSession();
-        } else if (global.sessionConfig && global.sessionConfig.keepSession) {
-            console.log('🔄 Keeping session alive for next test...');
-            // Don't delete session - keep it alive
-        } else {
-            console.log('📋 Default behavior: session will be terminated after test suite');
-        }
+
+        // Restart app session
+        await driver.terminateApp('com.minhtu.firesocialmedia');
+        await driver.activateApp('com.minhtu.firesocialmedia');
+
     },
+
 
 
     /**
