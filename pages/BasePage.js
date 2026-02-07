@@ -18,11 +18,14 @@ export default class BasePage {
    */
   async waitAndSetValue(element, value, timeout = 10000) {
     await element.waitForDisplayed({ timeout });
+    await element.click(); // focus
+    await element.clearValue();
     await element.setValue(value);
   }
 
   /**
    * More reliable text input for Android using coordinate-based input
+   * backup plan
    */
   async setTextWithFallback(element, text, timeout = 10000) {
     await element.waitForDisplayed({ timeout });
@@ -164,47 +167,5 @@ export default class BasePage {
   async waitForText(text, timeout = 10000) {
     const element = $(`//*[contains(@text, "${text}")]`);
     await this.waitForElement(element, timeout);
-  }
-
-  /**
-   * Ensure keyboard is properly shown and ready for input
-   */
-  async ensureKeyboardReady() {
-    try {
-      // Hide keyboard first
-      await browser.hideKeyboard();
-      await browser.pause(300);
-      
-      // Show keyboard by tapping on screen
-      const { width, height } = await browser.getWindowSize();
-      await browser.touchAction({
-        action: 'tap',
-        x: width / 2,
-        y: height / 2
-      });
-      await browser.pause(500);
-    } catch (_) {
-      // Ignore errors, continue
-    }
-  }
-
-  async reloadPage(){
-    await driver.performActions([
-      {
-        type: 'pointer',
-        id: 'finger1',
-        parameters: { pointerType: 'touch' },
-        actions: [
-          { type: 'pointerMove', duration: 0, x: 500, y: 300 },
-          { type: 'pointerDown', button: 0 },
-          { type: 'pause', duration: 200 },
-          { type: 'pointerMove', duration: 800, x: 500, y: 1200 },
-          { type: 'pointerUp', button: 0 }
-        ]
-      }
-    ]);
-
-    await driver.releaseActions();
-
   }
 }

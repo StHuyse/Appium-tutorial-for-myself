@@ -9,7 +9,7 @@ export default class HomePage extends BasePage{
     get tabPost(){return $('//u0.i0/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View')}
 
     async searchPeople(text){
-        await this.setTextWithFallback(this.searchBar, text, 10000);
+        await this.waitAndSetValue(this.searchBar, text, 10000);
         const clickUser = await $(`new UiSelector().text("${text}")`)
         if(this.isElementDisplayed(clickUser)){
             clickUser.click();
@@ -20,6 +20,6 @@ export default class HomePage extends BasePage{
     }
 
     async searchPost(text){
-        await this.setTextWithFallback(this.searchBar, text, 10000);
+        await this.waitAndSetValue(this.searchBar, text, 10000);
     }
 }

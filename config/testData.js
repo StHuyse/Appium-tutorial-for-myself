@@ -1,6 +1,9 @@
+import { generateRandomEmail } from '#roots/utils/helper.js'
+import { generateRandomUsername } from '#roots/utils/helper.js';
+//Sign in data
 export const userData = {
   validUser: {
-    email: 'test123@gmail.com',
+    email: 'khua01@gmail.com',
     password: '123456'
   },
   invalidUser: {
@@ -13,17 +16,34 @@ export const userData = {
   }
 };
 
+//Sign up data
+export const signUpData = {
+  validRegister: {
+    email: generateRandomEmail(),
+    password: '123456',
+    confirmPassword: '123456'
+  },
+  invalidRegister:{
+    wrongEmail:{
+      email: 't@.om',
+      password: '123456',
+      confirmPassword: '123456'
+    },
+    wrongPassword:{
+      email: generateRandomEmail(),
+      password: '12345',
+      confirmPassword: '123456'
+    },
+    wrongConfirmPassword:{
+      email: generateRandomEmail(),
+      password: '123456',
+      confirmPassword: '12345'
+    }
+  }
+}
 export const nickname ={
-  username : 'TestAutomation1'
+  username : generateRandomUsername()
 } 
-export const appConfig = {
-  appPackage: 'com.minhtu.firesocialmedia',
-  appActivity: 'com.minhtu.firesocialmedia.android.MainActivity',
-  platformName: 'Android',
-  automationName: 'UiAutomator2',
-  deviceName: 'Android Devices',
-  autoGrantPermissions: true
-};
 
 export const timeouts = {
   short: 5000,
@@ -31,10 +51,12 @@ export const timeouts = {
   long: 30000
 };
 
-export const postContentOnly = {
-  content: 'test post content only'
+// post and post interaction data
+export const contentOnly = {
+  content: 'test automation content only!'
 };
 
-export const commentContentOnly = {
-  content: 'test comment'
-};
+//Core user is used for running forgot passsword flow
+export const coreUser = {
+  username: 'khua01@gmail.com'
+}

@@ -10,7 +10,9 @@ describe('Signup test TC_SU', () => {
   });
 
   it('TC_SU_P_001 + TC_SU_P_002: Valid user sign up', async () => {
-    await signupPage.signup(userData.validUser.email, userData.validUser.password, userData.validUser.password, nickname.username);
-    console.log('Test case TC_SU_P_001 and TC_SU_P_002 pass');
+    let actionSignUp = await signupPage.signup(userData.validUser.email, userData.validUser.password, userData.validUser.password, nickname.username);
+    await expect(actionSignUp).toBeDisplayed();
   });
+
+  
 });

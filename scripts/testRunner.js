@@ -26,7 +26,7 @@ function askQuestion(question) {
 }
 
 async function runTests() {
-  console.log('📋 Test Options:');
+  console.log('Test Options:');
   console.log('1. Run all tests (default session behavior)');
   console.log('2. Run all tests (quit after each test)');
   console.log('3. Run all tests (keep session alive)');
@@ -127,7 +127,7 @@ async function runTests() {
   }
 }
 
-// Handle Ctrl+C gracefully
+// Handle Ctrl+C 
 process.on('SIGINT', () => {
   console.log('\n\n👋 Goodbye!');
   rl.close();

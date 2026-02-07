@@ -1,7 +1,6 @@
 import BasePage from "../BasePage";
 
 export default class PostPage extends BasePage{
-    get buttonSearch(){return $('~TAG_ICON_BUTTON_SEARCH')}
     get createPostField() {return $('~TAG_CREATE_POST')}
     get postMessageField(){return $('~TAG_POST_MESSAGE')}
     get uploadButton(){return $('~TAG_BUTTON_UPLOAD')}  
@@ -9,16 +8,21 @@ export default class PostPage extends BasePage{
     get buttonSelectVideo(){return $('~TAG_BUTTON_SELECTVIDEO')}
     get deleteButton(){return $('~TAG_BUTTON_DELETE')}
     get postButton(){return $('~TAG_BUTTON_POST')} 
+    get buttonDraftPost(){return $('~TAG_BUTTON_DRAFTPOST')}
     get buttonBack(){return $('~TAG_BUTTON_BACK')}
     get buttonYes(){return $('~TAG_BUTTON_YES')}
     //get buttonNo(){return $('~TAG_BUTTON_NO')}
+    get buttonChangePrivacy(){return $('~TAG_BUTTON_ACCESS_MODIFIER')}
+    get buttonPublic(){return $('~TAG_SELECT_PUBLIC')}
+    get buttonPrivate(){return $('~TAG_SELECT_PRIVATE')}
+    get buttonSelect(){return $('//android.widget.TextView[@text="Select"]')}
 
     async upPostWithImage(message){
         console.log('Starting post process...');
         
         // Enter message
         console.log('Entering message...');
-        await this.setTextWithFallback(this.postMessageField, message);
+        await this.waitAndSetValue(this.postMessageField, message);
         await browser.pause(1000);
         
         // Click Upload button.
@@ -42,12 +46,11 @@ export default class PostPage extends BasePage{
         
         // Enter message
         console.log('Entering message...');
-        await this.setTextWithFallback(this.postMessageField, message);
+        await this.waitAndSetValue(this.postMessageField, message);
         await browser.pause(1000);
         
         // Click Upload button.
         if (await this.isElementDisplayed(this.uploadButton)) {
-        console.log('Clicking upload button...');
         await this.uploadButton.click();
         }
 
@@ -62,16 +65,13 @@ export default class PostPage extends BasePage{
     }
 
     async upPostWithMessageOnly(message){
-        console.log('Starting post process...');
         
         // Enter message
-        console.log('Entering message...');
-        await this.setTextWithFallback(this.postMessageField, message);
+        await this.waitAndSetValue(this.postMessageField, message, 10000);
         await browser.pause(1000);
         
         // Click Upload button.
         if (await this.isElementDisplayed(this.uploadButton)) {
-            console.log('Clicking upload button...');
             await this.uploadButton.click();
         }
 

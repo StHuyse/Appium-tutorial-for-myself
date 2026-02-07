@@ -1,10 +1,7 @@
 // Test setup file
 import { userData } from '#roots/config/testData.js';
-import { postContentOnly } from '#roots/config/testData.js';
-import { commentContentOnly } from '#roots/config/testData.js';
 // Global test data
 global.userData = userData;
-
 // Global timeout settings
 global.timeouts = {
   short: 5000,

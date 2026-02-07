@@ -6,7 +6,7 @@ export default class ForgotPasswordPage extends BasePage {
     get buttonBack(){return $('//android.widget.TextView[@text="Back"]')}
 
     async forgotPassword(username){
-        await this.setTextWithFallback(this.usernameField, username);
+        await this.waitAndSetValue(this.usernameField, username);
         await this.buttonResetPassword.click();
     }
 }
