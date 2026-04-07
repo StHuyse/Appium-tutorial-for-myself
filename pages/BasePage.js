@@ -1,14 +1,6 @@
+import { driver } from "@wdio/globals";
+
 export default class BasePage {
-  /**
-   * Wait for an element to be visible and clickable
-   * @param {WebdriverIO.Element} element - The element to wait for
-   * @param {number} timeout - Maximum time to wait in milliseconds
-   */
-  async waitAndClick(element, timeout = 10000) {
-    await element.waitForDisplayed({ timeout });
-    await element.waitForClickable({ timeout });
-    await element.click();
-  }
 
   /**
    * Wait for an element to be visible and then set its value
@@ -16,12 +8,14 @@ export default class BasePage {
    * @param {string} value - The value to set
    * @param {number} timeout - Maximum time to wait in milliseconds
    */
-  async waitAndSetValue(element, value, timeout = 10000) {
-    await element.waitForDisplayed({ timeout });
-    await element.click(); // focus
-    await element.clearValue();
-    await element.setValue(value);
-  }
+// async waitAndSetValue(element, value, timeout = 10000) {
+//     await element.waitForDisplayed({ timeout })
+//     await element.waitForEnabled({ timeout })
+
+//     await element.click()
+//     await element.clearValue()
+//     await element.addValue(value);
+// }
 
   /**
    * More reliable text input for Android using coordinate-based input
@@ -123,8 +117,18 @@ export default class BasePage {
    * @param {WebdriverIO.Element} element - The element to wait for
    * @param {number} timeout - Maximum time to wait in milliseconds
    */
-  async waitForElement(element, timeout = 10000) {
+  async waitAndClickElement(element, timeout = 15000) {
     await element.waitForDisplayed({ timeout });
+    //console.log(`click elemnent`);
+    await element.waitForEnabled({ timeout: 10000 });
+    await element.click();
+    //console.log('click success');
+  }
+
+  async clickElementAndEnterText(element, string, timeout = 15000) {
+    await element.waitForDisplayed({ timeout });
+    await element.waitForEnabled({ timeout: 10000 });
+    await element.setValue(string);
   }
 
   /**
@@ -155,8 +159,14 @@ export default class BasePage {
    * Scroll to an element
    * @param {WebdriverIO.Element} element - The element to scroll to
    */
-  async scrollToElement(element) {
-    await element.scrollIntoView();
+  async scrollToElementAndClick(text) {
+    element = await $(`new UiSelector().text("${text}")`)
+      if(await element.isDisplayed()){
+        element.click();
+      }
+      else{
+          element.scrollToElement();
+      }
   }
 
   /**
@@ -168,4 +178,19 @@ export default class BasePage {
     const element = $(`//*[contains(@text, "${text}")]`);
     await this.waitForElement(element, timeout);
   }
+
+  //scroll to the nickname and click the button inside the container which contains the nickname 
+  async scrollAndClickButton(element, buttonName){
+    const container = await $(
+      `android=new UiScrollable(new UiSelector().scrollable(true))` +
+      `.scrollIntoView(new UiSelector().text("${element}"))`
+    );
+    if(container.isDisplayed()){
+      await container.$(`android=new UiSelector().text("${buttonName}")`).click();
+    }
+    else{
+      throw new Error('Container is not founded');
+    }
+  }
 }
+

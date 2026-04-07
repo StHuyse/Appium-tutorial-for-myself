@@ -37,7 +37,7 @@ export default class CommentPage extends BasePage{
     }
 
     async uploadComment(text){
-        await this.waitAndSetValue(this.editTextInputComment,text);
+        await this.setTextWithFallback(this.editTextInputComment,text);
         await this.buttonSend.click();
     }
 
@@ -47,7 +47,7 @@ export default class CommentPage extends BasePage{
             await this.editTextInputComment.setValue('test comment the comment');
         }
         else{
-            await this.waitAndSetValue(this.editTextInputComment,text);
+            await this.setTextWithFallback(this.editTextInputComment,text);
         }
     }
 

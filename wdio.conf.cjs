@@ -1,6 +1,6 @@
 // Enable Babel transpiling
 require('@babel/register');
-
+const { sessionConfig } = require('./config/sessionConfig.js');
 exports.config = {
     //
     // ====================
@@ -9,6 +9,7 @@ exports.config = {
     // WebdriverIO supports running e2e tests as well as unit and component tests.
     runner: 'local',
     port: 4723,
+    restartSession: !sessionConfig.keepSession,
     //
     // ==================
     // Specify Test Files
@@ -24,9 +25,10 @@ exports.config = {
     // The path of the spec files will be resolved relative from the directory of
     // of the config file unless it's absolute.
     //
-    specs: [
-        './test/specs/**/*.js'
-    ],
+
+    specs: sessionConfig.keepSession
+        ? ['./test/e2e/**/*.js']
+        : ['./test/specs/**/*.js'],
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
@@ -59,9 +61,10 @@ exports.config = {
         'appium:deviceName': 'Android Devices',
         'appium:automationName': 'UiAutomator2',
         'appium:unicodeKeyboard': true,
+        'appium:appiumKeyboard': false,
         'appium:resetKeyboard': true,
-        'appium:skipServerInstallation': true,
-        'appium:skipDeviceInitialization': true,
+        'appium:skipServerInstallation': false,
+        'appium:skipDeviceInitialization': false,
         'appium:app': './apps/Fire_Social_Media-release-v5.2.0.apk',
         'appium:appPackage': 'com.minhtu.firesocialmedia',
         'appium:appActivity': 'com.minhtu.firesocialmedia.android.MainActivity',
@@ -69,7 +72,10 @@ exports.config = {
         'appium:noReset': false,
         'appium:fullReset': false,
         'appium:newCommandTimeout': 300,
-        'appium:androidInstallTimeout': 90000
+        'appium:androidInstallTimeout': 90000,
+        'appium:uiautomator2ServerInstallTimeout': 120000,
+        'appium:uiautomator2ServerLaunchTimeout': 120000,
+        'appium:adbExecTimeout': 120000
     }],
 
     //
@@ -80,6 +86,10 @@ exports.config = {
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'info',
+    autoCompileOpts: {
+        autoCompile: true
+    },
+    injectGlobals: true,
     //bonus
     // path: '/wd/hub',
     // host: 'localhost',
@@ -162,7 +172,7 @@ exports.config = {
     mochaOpts: {
         ui: 'bdd',
         require: ['./node_modules/@babel/register', './test/setup.js'],
-        timeout: 60000
+        timeout: 100000
     },
 
     //
@@ -211,19 +221,15 @@ exports.config = {
      * @param {string} cid worker id (e.g. 0-0)
      */
     beforeSession: function (config, capabilities, specs, cid) {
-        // Load session configuration
-        const { sessionConfig } = require('./config/sessionConfig.js');
-        
-        // Store session config globally for use in other hooks
+        console.log('STARTING SPEC:', specs);
+
         global.sessionConfig = sessionConfig;
-        
-        if (sessionConfig.quitAfterTest) {
-            console.log('Session will be terminated after each test');
-        } else if (sessionConfig.keepSession) {
-            console.log('Session will be kept alive between tests');
-        } else {
-            console.log(' Default session behavior (terminate after test suite)');
-        }
+
+        console.log(
+            sessionConfig.keepSession
+                ? 'E2E MODE: Keep session'
+                : 'REGRESSION MODE: Reset session'
+        );
     },
     /**
      * Gets executed before test execution begins. At this point you can access to all global
@@ -249,8 +255,11 @@ exports.config = {
      * @param {string} commandName hook command name
      * @param {Array} args arguments that command would receive
      */
-    // beforeCommand: function (commandName, args) {
-    // },
+    beforeCommand: function (commandName, args) {
+        if (!driver.sessionId) {
+            console.log(`Command ${commandName} called with NO SESSION`);
+        }
+    },
     /**
      * Hook that gets executed before the suite starts
      * @param {object} suite suite details
@@ -284,18 +293,8 @@ exports.config = {
      * @param {boolean} result.passed    true if test has passed, otherwise false
      * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-    afterTest: async function(test, context, { error, passed }) {
-
-        if (!passed) {
-            await browser.takeScreenshot();
-            console.log('Screenshot taken due to test failure');
-        }
-
-        // Restart app session
-        await driver.terminateApp('com.minhtu.firesocialmedia');
-        await driver.activateApp('com.minhtu.firesocialmedia');
-
-    },
+    // afterTest: async function(test, context, { error, passed }) {
+    // },  
 
 
 
@@ -329,8 +328,21 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // afterSession: function (config, capabilities, specs) {
-    // },
+    //if tests fail → WDIO still runs afterSession → adb command resets keyboard
+    afterSession: function () {
+        console.log('SESSION ENDED');
+
+        // ONLY reset keyboard in regression mode
+        if (!sessionConfig.keepSession) {
+            const { execSync } = require('child_process');
+            try {
+                execSync('adb shell ime reset');
+                console.log('Keyboard reset successfully');
+            } catch (e) {
+                console.log('Keyboard reset failed');
+            }
+        }
+    },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
      * thrown in the onComplete hook will result in the test run failing.
@@ -384,4 +396,5 @@ exports.config = {
     */
     // afterAssertion: function(params) {
     // }
+
 }

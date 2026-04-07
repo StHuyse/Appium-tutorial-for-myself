@@ -1,4 +1,4 @@
-import BasePage from "../BasePage";
+import BasePage from "../BasePage.js";
 
 export default class SignUpAvatarPage extends BasePage {
     get selectNameField(){return $('~TAG_SELECT_NAME')}
@@ -14,7 +14,7 @@ export default class SignUpAvatarPage extends BasePage {
         await firstImage.click();
 
         //Enter nickname
-        await this.waitAndSetValue(this.selectNameField, selectName);
+        await this.setTextWithFallback(this.selectNameField, selectName);
 
         //Click Next button
         await this.nextButton.click();

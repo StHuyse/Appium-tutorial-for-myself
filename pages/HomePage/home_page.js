@@ -1,10 +1,10 @@
 //Post x Interaction & post x privacy
-import BasePage from "../BasePage";
+import BasePage from "../BasePage.js";
 
 export default class HomePage extends BasePage{
     get buttonSearch(){return $('~TAG_ICON_BUTTON_SEARCH')}
-    get buttonSignOut(){return $('android=new UiSelector().className("android.view.View").index(5)')}
-    get buttonYes(){return $('~TAG_BUTTON_YES')}
+    get buttonSignOut(){return $('~TAG_BUTTON_LOGOUT')}
+    get buttonYes(){return $('android=new UiSelector().className("android.widget.Button").instance(0)')}
     //get buttonNo(){return $('~TAG_BUTTON_NO')}
     get ownPersonalPage(){return $('~TAG_CURRENT_USER')}
     get createPostField() {return $('~TAG_CREATE_POST')}
@@ -31,7 +31,7 @@ export default class HomePage extends BasePage{
     get buttonVolumn(){return $('//android.widget.TextView[@resource-id="com.minhtu.firesocialmedia:id/exo_main_text" and @text="Âm thanh"]')}
     get video(){return $('//android.view.View[@resource-id="com.minhtu.firesocialmedia:id/exo_controls_background"]')}
     get buttonScrollToTop(){('~SCROLL_TO_TOP_BUTTON')}
-
+    get settingBar(){return $('~TAG_SETTING_BOTTOM')};
     
 
     async clickCreatePostField(){
@@ -43,8 +43,9 @@ export default class HomePage extends BasePage{
     }
 
     async signOut(){
-        await this.buttonSignOut.click();
-        await this.buttonYes.click();
+        await this.settingBar.click();
+        await this.waitAndClickElement(this.buttonSignOut);
+        await this.waitAndClickElement(this.buttonYes);
     }
 
     async clickButtonSearch(){

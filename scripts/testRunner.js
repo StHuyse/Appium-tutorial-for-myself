@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-import { execSync } from'child_process';
-
+import { execSync } from 'child_process';
 import readline from 'readline';
 
 const rl = readline.createInterface({
@@ -9,127 +8,111 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-console.log('Mobile Automation Test Runner');
-console.log('================================\n');
-//syntax Promise
-// if (window.Promise) { // Check if the browser supports Promises
-//   var promise = new Promise(function(resolve, reject) {
-//     //asynchronous code goes here
-//   });
-// }
 function askQuestion(question) {
   return new Promise((resolve) => {
-    rl.question(question, (answer) => {
-      resolve(answer);
-    });
+    rl.question(question, (answer) => resolve(answer));
+  });
+}
+
+function runCommand(command, env = {}) {
+  execSync(command, {
+    stdio: 'inherit',
+    env: { ...process.env, ...env }
   });
 }
 
 async function runTests() {
+  console.log('Mobile Automation Test Runner');
+  console.log('================================\n');
+
   console.log('Test Options:');
-  console.log('1. Run all tests (default session behavior)');
-  console.log('2. Run all tests (quit after each test)');
-  console.log('3. Run all tests (keep session alive)');
-  console.log('4. Run login tests only');
-  console.log('5. Run tests without Allure report');
-  console.log('6. Run tests in debug mode');
-  console.log('7. Generate Allure report only');
-  console.log('8. Open Allure report');
-  console.log('9. Exit\n');
-  console.log('10.Run signup tests only');
-  console.log('11. Run tests by flow (Sign In / Sign Up)');
+  console.log('1. Run REGRESSION (reset session per file)');
+  console.log('2. Run E2E FLOW (keep session)');
+  console.log('3. Run SPECIFIC FILE');
+  console.log('4. Run LOGIN tests only');
+  console.log('5. Run SIGNUP tests only');
+  console.log('6. Generate Allure report');
+  console.log('7. Open Allure report');
+  console.log('8. Exit\n');
 
-
-  const choice = await askQuestion('Select an option (1-11): ');
+  const choice = await askQuestion('Select an option (1-8): ');
 
   switch (choice) {
     case '1':
-      console.log('\n🔄 Running all tests with default session behavior...\n');
-      execSync('npm run test', { stdio: 'inherit' });
-      break;
-    
-    case '2':
-      console.log('\n⚠️  Running all tests (will quit after each test)...\n');
-      execSync('npm run test:quit-after', { stdio: 'inherit' });
-      break;
-    
-    case '3':
-      console.log('\n🔄 Running all tests (keeping session alive)...\n');
-      execSync('npm run test:keep-session', { stdio: 'inherit' });
-      break;
-    
-    case '4':
-      console.log('\n🔐 Running login tests only...\n');
-      execSync('npm run test:login', { stdio: 'inherit' });
-      break;
-    
-    case '5':
-      console.log('\n📊 Running tests without Allure report...\n');
-      execSync('npm run test:no-allure', { stdio: 'inherit' });
-      break;
-    
-    case '6':
-      console.log('\n🐛 Running tests in debug mode...\n');
-      execSync('npm run test:debug', { stdio: 'inherit' });
-      break;
-    
-    case '7':
-      console.log('\n📊 Generating Allure report...\n');
-      execSync('npm run allure:generate', { stdio: 'inherit' });
-      break;
-    
-    case '8':
-      console.log('\n🌐 Opening Allure report...\n');
-      execSync('npm run allure:open', { stdio: 'inherit' });
-      break;
-    
-    case '9':
-      console.log('\n👋 Goodbye!');
-      rl.close();
-      return;
-    
-    case '10':
-      console.log('\n🔐 Running sign up tests only...\n');
-      execSync('npm run test:signup', { stdio: 'inherit' });
+      console.log('\nRunning REGRESSION tests...\n');
+      runCommand('npx wdio run wdio.conf.js', {
+        TEST_MODE: 'regression'
+      });
       break;
 
-    case '11':
-      console.log('\n Select Flow:');
-      console.log('1. Sign In Flow');
-      console.log('2. Sign Up Flow\n');
-      if (flowChoice === '1') {
-        console.log('\n Running Sign In flow tests...\n');
-        execSync('npm run test:login', { stdio: 'inherit' });
-      } else if (flowChoice === '2') {
-        console.log('\n Running Sign Up flow tests...\n');
-        execSync('npm run test:signup', { stdio: 'inherit' });
-      } else {
-        console.log('\n Invalid flow option.\n');
-        await runTests();
-        return;
-      }
+    case '2':
+      console.log('\nRunning E2E flow...\n');
+      runCommand('npx wdio run wdio.conf.js', {
+        TEST_MODE: 'e2e'
+      });
       break;
+
+    case '3':
+      const filePath = await askQuestion('Enter spec file path: ');
+      console.log(`\nRunning file: ${filePath}\n`);
+
+      const mode = await askQuestion('Choose mode (regression/e2e): ');
+
+      runCommand(`npx wdio run wdio.conf.js --spec ${filePath}`, {
+        TEST_MODE: mode || 'regression'
+      });
+      break;
+
+    case '4':
+      console.log('\ Running LOGIN tests...\n');
+      runCommand('npx wdio run wdio.conf.js --spec ./test/specs/login/**/*.js', {
+        TEST_MODE: 'regression'
+      });
+      break;
+
+    case '5':
+      console.log('\nRunning SIGNUP tests...\n');
+      runCommand('npx wdio run wdio.conf.js --spec ./test/specs/signup/**/*.js', {
+        TEST_MODE: 'regression'
+      });
+      break;
+
+    case '6':
+      console.log('\nGenerating Allure report...\n');
+      runCommand('npx allure generate ./allure-results --clean -o ./allure-report');
+      break;
+
+    case '7':
+      console.log('\nOpening Allure report...\n');
+      runCommand('npx allure open ./allure-report');
+      break;
+
+    case '8':
+      console.log('\nGoodbye fella!');
+      rl.close();
+      return;
+
     default:
-      console.log('\n Invalid option. Please try again.\n');
+      console.log('\nInvalid option\n');
       await runTests();
       return;
   }
 
-  console.log('\n✅ Operation completed!');
-  const continueChoice = await askQuestion('\nWould you like to run another test? (y/n): ');
-  
-  if (continueChoice.toLowerCase() === 'y' || continueChoice.toLowerCase() === 'yes') {
+  console.log('\nDone!\n');
+
+  const again = await askQuestion('Run another test? (y/n): ');
+  if (again.toLowerCase() === 'y') {
     console.log('\n');
     await runTests();
   } else {
-    console.log('\n👋 Goodbye!');
+    console.log('\nGoodbye!');
     rl.close();
   }
 }
 
-// Handle Ctrl+C 
+// Handle Ctrl+C
 process.on('SIGINT', () => {
-  console.log('\n\n👋 Goodbye!');
+  console.log('\n\nGoodbye!');
   rl.close();
   process.exit(0);
 });

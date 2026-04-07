@@ -42,8 +42,13 @@ export const signUpData = {
   }
 }
 export const nickname ={
-  username : generateRandomUsername()
+  randomNickname : generateRandomUsername(),
+  nickname : 'test'
 } 
+
+export const post ={
+  content : 'auto'
+}
 
 export const timeouts = {
   short: 5000,
@@ -58,5 +63,9 @@ export const contentOnly = {
 
 //Core user is used for running forgot passsword flow
 export const coreUser = {
-  username: 'khua01@gmail.com'
+  username: 'khua01@yopmail.com'
+}
+
+export const groupName ={
+  name : 'test create group'
 }

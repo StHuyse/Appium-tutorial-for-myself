@@ -1,12 +1,14 @@
-import BasePage from "../BasePage";
+import BasePage from "../BasePage.js";
+import SignInPage from "./signin_page.js";
 
 export default class ForgotPasswordPage extends BasePage {
-    get usernameField() { return $('~TAG_USERNAME')}
-    get buttonResetPassword(){return $('//u0.i0/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.widget.Button')}
-    get buttonBack(){return $('//android.widget.TextView[@text="Back"]')}
+    get usernameField() { return $('android=new UiSelector().className("android.widget.EditText")')}
+    get buttonResetPassword(){return $('android=new UiSelector().text("Send Reset Link")')}
+    get buttonBack(){return $('~TAG_BUTTON_BACK')}
 
     async forgotPassword(username){
-        await this.waitAndSetValue(this.usernameField, username);
+        await this.waitAndClickElement(new SignInPage().forgotPasswordField);
+        await this.clickElementAndEnterText(this.usernameField, username);
         await this.buttonResetPassword.click();
     }
 }

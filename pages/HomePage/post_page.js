@@ -1,92 +1,57 @@
 import BasePage from "../BasePage";
 
 export default class PostPage extends BasePage{
-    get createPostField() {return $('~TAG_CREATE_POST')}
-    get postMessageField(){return $('~TAG_POST_MESSAGE')}
+    get postMessageField(){return $(`android=new UiSelector().text("What's on your mind?")`)}
+    get buttonClose(){return $('~TAG_BUTTON_CLOSE')}
+    get buttonDraftPost(){return $('~TAG_BUTTON_DRAFTPOST')}
+    get buttonChangePrivacy(){return $('~TAG_BUTTON_ACCESS_MODIFIER')}
+    get buttonPublic(){return $('android=new UiSelector().className("android.widget.RadioButton").instance(0)')}
+    get buttonPrivate(){return $('android=new UiSelector().className("android.widget.RadioButton").instance(1)')}
+    get buttonSelect(){return $('android=new UiSelector().text("Select")')}
+    get postButton(){return $('~TAG_BUTTON_POST')} 
+    get buttonBack(){return $('~TAG_BUTTON_BACK')}
     get uploadButton(){return $('~TAG_BUTTON_UPLOAD')}  
     get buttonSelectImage(){return $('~TAG_BUTTON_SELECTIMAGE')}
     get buttonSelectVideo(){return $('~TAG_BUTTON_SELECTVIDEO')}
     get deleteButton(){return $('~TAG_BUTTON_DELETE')}
-    get postButton(){return $('~TAG_BUTTON_POST')} 
-    get buttonDraftPost(){return $('~TAG_BUTTON_DRAFTPOST')}
-    get buttonBack(){return $('~TAG_BUTTON_BACK')}
-    get buttonYes(){return $('~TAG_BUTTON_YES')}
-    //get buttonNo(){return $('~TAG_BUTTON_NO')}
-    get buttonChangePrivacy(){return $('~TAG_BUTTON_ACCESS_MODIFIER')}
-    get buttonPublic(){return $('~TAG_SELECT_PUBLIC')}
-    get buttonPrivate(){return $('~TAG_SELECT_PRIVATE')}
-    get buttonSelect(){return $('//android.widget.TextView[@text="Select"]')}
+    get buttonDiscardPost(){return $('android=new UiSelector().text("Discard")')}
+    get buttonCancelDiscardPost(){return $('android=new UiSelector().text("Cancel")')}
+    
 
     async upPostWithImage(message){
-        console.log('Starting post process...');
-        
-        // Enter message
-        console.log('Entering message...');
-        await this.waitAndSetValue(this.postMessageField, message);
-        await browser.pause(1000);
-        
-        // Click Upload button.
-        if (await this.isElementDisplayed(this.uploadButton)) {
-        console.log('Clicking upload button...');
-        await this.uploadButton.click();
-        }
-
-        // Choose image
+        //console.log('Entering message...');
+        await this.clickElementAndEnterText(this.postMessageField, message);
+        //console.log('Clicking upload button...');
+        await this.waitAndClickElement(this.uploadButton);
         const firstImage = await $(
-            'android=new UiSelector().className("android.widget.ImageView").instance(1)'//choose the 1st image
-            );
-        await firstImage.click();
-
-        // Click Post button
-        await this.postButton.click();
+            'android=new UiSelector().resourceId("com.google.android.providers.media.module:id/icon_thumbnail").instance(0)'
+            );//click the 1st image.
+        await this.waitAndClickElement(firstImage);
+        await this.waitAndClickElement(this.postButton);
     }
 
     async upPostWithVideo(message){
-        console.log('Starting post process...');
-        
-        // Enter message
-        console.log('Entering message...');
-        await this.waitAndSetValue(this.postMessageField, message);
-        await browser.pause(1000);
-        
-        // Click Upload button.
-        if (await this.isElementDisplayed(this.uploadButton)) {
-        await this.uploadButton.click();
-        }
-
-        // Choose video
+        //console.log('Entering message...');
+        await this.clickElementAndEnterText(this.postMessageField, message);
+        await this.waitAndClickElement(this.uploadButton);
         const firstVideo = await $(
-            'android=new UiSelector().className("android.widget.ImageView").instance(1)'
+            'android=new UiSelector().resourceId("com.google.android.providers.media.module:id/icon_thumbnail").instance(0)'
         );
-        await firstVideo.click();
-
-        // Click Post button
-        await this.postButton.click();
+        await this.waitAndClickElement(firstVideo);
+        await this.waitAndClickElement(this.postButton);
     }
 
     async upPostWithMessageOnly(message){
-        
-        // Enter message
-        await this.waitAndSetValue(this.postMessageField, message, 10000);
-        await browser.pause(1000);
-        
-        // Click Upload button.
-        if (await this.isElementDisplayed(this.uploadButton)) {
-            await this.uploadButton.click();
-        }
-
-        // Click Post button
-        await this.postButton.click();
+        await this.clickElementAndEnterText(this.postMessageField, message);
+        await this.waitAndClickElement(this.postButton);
     }
 
     async upPostWithNothing(){
-        // Click Post button
-        await this.postButton.click();
+        await this.waitAndClickElement(this.postButton);
     }
 
     async exitPost(){
-        await this.buttonBack.click();
-        await browser.pause(300);
-        await this.buttonYes.click();
+        await this.waitAndClickElement(this.buttonBack);
+        await this.waitAndClickElement(this.buttonDiscardPost);
     }
 }

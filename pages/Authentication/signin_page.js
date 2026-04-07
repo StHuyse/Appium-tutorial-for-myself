@@ -1,8 +1,13 @@
-import BasePage from "../BasePage";
+import { browser, driver } from "@wdio/globals";
+import BasePage from "../BasePage.js";
 
 export default class SignInPage extends BasePage {
-    get usernameField() { return $('~TAG_USERNAME')}
-    get passwordField() { return $('~TAG_PASSWORD')}
+    get usernameField() {
+        return $('android=new UiSelector().className("android.widget.EditText").instance(0)');
+    }
+    get passwordField() {
+        return $('android=new UiSelector().className("android.widget.EditText").instance(1)');
+    }
     get forgotPasswordField() { return $('~TAG_FORGOTPASSWORD')}
     get rememberPasswordField() { return $('~TAG_REMEMBERPASSWORD')}
     get signUpButton() {return $('~TAG_BUTTON_SIGNUP')}
@@ -10,22 +15,10 @@ export default class SignInPage extends BasePage {
     get loginButton(){ return $('~TAG_BUTTON_SIGNIN')}
   
 
-    async handlePermission() {
-        const allowButton = await $('//android.widget.Button[@text="Cho phép"]');
-        //if exist dialog -> click, else continue
-        if (await allowButton.isDisplayed().catch(() => false)) {
-            await allowButton.click();
-        }
-    }
-
     async login(username, password) {
-        await this.usernameField.waitForDisplayed({ timeout: 5000 });
-        await this.waitAndSetValue(this.usernameField, username, 10000);
-        await this.passwordField.waitForDisplayed({ timeout: 5000 });
-        await this.waitAndSetValue(this.passwordField, password, 10000);
-
-        await this.loginButton.waitForEnabled({ timeout: 2000 });
-        await this.loginButton.click();
+        await this.clickElementAndEnterText(this.usernameField, username);
+        await this.clickElementAndEnterText(this.passwordField, password);
+        await this.waitAndClickElement(this.loginButton);
     }
 
     async signInWithGoogle(){
@@ -37,7 +30,6 @@ export default class SignInPage extends BasePage {
     }
 
     async clickRememberPassword(){
-        // Click remember password if available
         if (this.isElementDisplayed(this.rememberPasswordField)) {
             await this.rememberPasswordField.click();
         }

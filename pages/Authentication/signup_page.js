@@ -1,5 +1,5 @@
 //Authentication
-import BasePage from "../BasePage";
+import BasePage from "../BasePage.js";
 
 export default class SignUpPage extends BasePage {
   get signUpButton() {return $('~TAG_BUTTON_SIGNUP')}
@@ -22,17 +22,17 @@ export default class SignUpPage extends BasePage {
 
         // Enter username
         console.log('Entering username...');
-        await this.waitAndSetValue(this.usernameField, username);
+        await this.setTextWithFallback(this.usernameField, username);
         await browser.pause(1000);
         
         // Enter password
         console.log('Entering password...');
-        await this.waitAndSetValue(this.passwordField, password);
+        await this.setTextWithFallback(this.passwordField, password);
         await browser.pause(1000);
 
         // Enter confirm password
         console.log('Entering confirm password...');
-        await this.waitAndSetValue(this.confirmPasswordField, confirmPassword);
+        await this.setTextWithFallback(this.confirmPasswordField, confirmPassword);
         await browser.pause(1000);
         // // Check whether the account is already exist
         // let dataAccount = checkAccountExist();

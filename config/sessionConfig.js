@@ -1,20 +1,21 @@
+const mode = process.env.TEST_MODE || 'regression';
+
 export const sessionConfig = {
-  // Session control options
-  quitAfterTest: process.env.QUIT_AFTER_TEST === 'true' || false,
-  keepSession: process.env.KEEP_SESSION === 'true' || false,
-  
-  // Allure report configuration
-  generateAllureReport: process.env.GENERATE_ALLURE === 'true' || true,
+  mode,
+
+  // Single source of truth
+  keepSession: mode === 'e2e',
+  quitAfterTest: mode === 'regression',
+
+  generateAllureReport: process.env.GENERATE_ALLURE !== 'false',
   allureResultsDir: './allure-results',
   allureReportDir: './allure-report',
-  
-  // Test execution options
+
   maxRetries: process.env.MAX_RETRIES || 2,
   timeout: process.env.TEST_TIMEOUT || 60000,
-  
-  // Debug options
-  debugMode: process.env.DEBUG_MODE === 'true' || false,
-  takeScreenshots: process.env.TAKE_SCREENSHOTS === 'true' || true
+
+  debugMode: process.env.DEBUG_MODE === 'true',
+  takeScreenshots: process.env.TAKE_SCREENSHOTS !== 'false'
 };
 
 // Helper function to get session control message
