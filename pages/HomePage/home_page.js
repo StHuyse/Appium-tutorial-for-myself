@@ -4,7 +4,7 @@ import BasePage from "../BasePage.js";
 export default class HomePage extends BasePage{
     get buttonSearch(){return $('~TAG_ICON_BUTTON_SEARCH')}
     get buttonSignOut(){return $('~TAG_BUTTON_LOGOUT')}
-    get buttonYes(){return $('android=new UiSelector().className("android.widget.Button").instance(0)')}
+    get buttonYes(){return $('android=new UiSelector().className("android.view.View").instance(5)')}
     //get buttonNo(){return $('~TAG_BUTTON_NO')}
     get ownPersonalPage(){return $('~TAG_CURRENT_USER')}
     get createPostField() {return $('~TAG_CREATE_POST')}
@@ -18,9 +18,6 @@ export default class HomePage extends BasePage{
     get imageOfThePost(){return $('~TAG_POST_IMAGE')}
     get buttonDownloadImage(){return $('~TAG_BUTTON_DOWNLOAD')}
     get buttonCloseImage(){return $('~TAG_BUTTON_CLOSE')}
-    get buttonLike(){return $('~TAG_BUTTON_LIKE')}
-    get buttonComment(){return $('~TAG_BUTTON_COMMENT')}
-    get buttonShare(){return $('~TAG_BUTTON_SHARE')}
     get buttonBackFiveSeconds(){return $('//android.widget.Button[@content-desc="Tua lại 5 giây"]')}
     get buttonSkipFifteenSeconds(){return $('//android.widget.Button[@content-desc="Tua nhanh 15 giây"]')}
     get buttonDisplayedVideo(){return $('//android.widget.ImageButton[@content-desc="Phát"]')}
@@ -33,56 +30,12 @@ export default class HomePage extends BasePage{
     get buttonScrollToTop(){('~SCROLL_TO_TOP_BUTTON')}
     get settingBar(){return $('~TAG_SETTING_BOTTOM')};
     
-
-    async clickCreatePostField(){
-        await this.createPostField.click();
-    }
-
-    async clickOwnPersonalPage(){
-        await this.ownPersonalPage.click();
-    }
-
+    
     async signOut(){
         await this.settingBar.click();
         await this.waitAndClickElement(this.buttonSignOut);
         await this.waitAndClickElement(this.buttonYes);
     }
-
-    async clickButtonSearch(){
-        await this.buttonSearch.click();
-    }
-
-    async clickFriendInListFriend(){
-        //auto click the first friend
-        await this.friendInListFriend.click();
-    }
-
-    async clickAvatarOfThePostOwner(){
-        await this.avatarOfThePostOwner.click();
-    }
-
-    async clickButtonMoreOption(){
-        await this.buttonMoreOption.click();
-    }
-
-    async clickImageOfThePost(){
-        await this.imageOfThePost.click();
-    }
-
-    async clickButtonLike(){
-        await this.buttonLike.click();
-    }
-
-    async clickButtonComment(){
-        await this.buttonComment.click();
-    }
-
-    async clickButtonShare(){
-        await this.buttonShare.click();
-    }
-
-
-    
 
     async clickCreatPostField(){
         if(this.createPostField.isDisplayed()){
@@ -98,8 +51,26 @@ export default class HomePage extends BasePage{
         await this.displayedVideo.click();
     }
 
-    async scrollToTop(){
-        await this.buttonScrollToTop.click();
-        await browser.pause(500);
+    async findPostsHaveComment(){
+        const posts = await $$('android=new UiSelector().description("TAG_POST_IN_COLUMN")');
+
+        for (let post of posts) {
+            try {
+                const commentTextElement = await post.$('android=new UiSelector().textContains("Comment")');
+                const text = await commentTextElement.getText();
+
+                // Extract number (example: "1 Comment" -> 1)
+                const match = text.match(/\d+/);
+                const commentCount = match ? parseInt(match[0]) : 0;
+
+                if (commentCount >= 1) {
+                    await post.$('android=new UiSelector().text("Comment")').click();   
+                    break;
+                }
+            } catch (err) {
+                // Skip if structure not matched
+                continue;
+            }
+        }
     }
 }

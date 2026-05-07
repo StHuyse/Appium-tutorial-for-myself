@@ -192,5 +192,41 @@ export default class BasePage {
       throw new Error('Container is not founded');
     }
   }
+
+  //swipe to reload
+  async swipeToReload(element = null) {
+    await this.waitForElement(element, timeout = 10000);
+    const { width, height } = await driver.getWindowRect();
+
+    // Define swipe points (center horizontally)
+    const startX = Math.floor(width / 2);
+    const startY = Math.floor(height * 0.3); // near top
+    const endY = Math.floor(height * 0.8);   // pull down
+
+    // If element provided → use its position
+    let swipeStartY = startY;
+    let swipeEndY = endY;
+
+    if (element) {
+        const rect = await element.getRect();
+        swipeStartY = rect.y + rect.height * 0.2;
+        swipeEndY = rect.y + rect.height * 0.8;
+    }
+
+    await driver.performActions([{
+        type: 'pointer',
+        id: 'finger1',
+        parameters: { pointerType: 'touch' },
+        actions: [
+            { type: 'pointerMove', duration: 0, x: startX, y: swipeStartY },
+            { type: 'pointerDown', button: 0 },
+            { type: 'pause', duration: 200 },
+            { type: 'pointerMove', duration: 800, x: startX, y: swipeEndY },
+            { type: 'pointerUp', button: 0 }
+        ]
+    }]);
+
+    await driver.releaseActions();
+  }
 }
 

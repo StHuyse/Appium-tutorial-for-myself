@@ -1,16 +1,4 @@
 // utils/helper.js
-
-/**
- * Wait for an element to be visible and clickable before interacting with it.
- * @param {WebdriverIO.Element} element - The element to wait for
- * @param {number} [timeout=5000] - Maximum time to wait (ms)
- */
-export async function waitAndClick(element, timeout = 5000) {
-  await element.waitForDisplayed({ timeout });
-  await element.waitForClickable({ timeout });
-  await element.click();
-}
-
 /**
  * Generate a random email address for testing
  * @returns {string} A unique email like "test_abc123@example.com"
@@ -47,4 +35,5 @@ export async function takeScreenshot(name) {
 export async function scrollToElement(element) {
   await element.scrollIntoView();
 }
+
 

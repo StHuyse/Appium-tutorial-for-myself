@@ -34,10 +34,11 @@ export default class PostPage extends BasePage{
         //console.log('Entering message...');
         await this.clickElementAndEnterText(this.postMessageField, message);
         await this.waitAndClickElement(this.uploadButton);
-        const firstVideo = await $(
-            'android=new UiSelector().resourceId("com.google.android.providers.media.module:id/icon_thumbnail").instance(0)'
+        //$$ === lay tat ca nhung phan tu dung voi mo ta, o day la video
+        const video = await $$(
+            'android=new UiSelector().descriptionContains("video")'
         );
-        await this.waitAndClickElement(firstVideo);
+        await this.waitAndClickElement(video[0]);
         await this.waitAndClickElement(this.postButton);
     }
 

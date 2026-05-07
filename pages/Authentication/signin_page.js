@@ -1,4 +1,3 @@
-import { browser, driver } from "@wdio/globals";
 import BasePage from "../BasePage.js";
 
 export default class SignInPage extends BasePage {
@@ -24,9 +23,8 @@ export default class SignInPage extends BasePage {
     async signInWithGoogle(){
         await this.buttonSignInWithGoogle.click();
 
-        const firstAccount = await $('//android.widget.LinearLayout[@resource-id="com.google.android.gms:id/container"][1]');
-        await firstAccount.waitForDisplayed({ timeout: 15000 });
-        await firstAccount.click();
+        const firstAccount = await $('android=new UiSelector().resourceId("com.google.android.gms:id/account_type").instance(0)');
+        await this.waitAndClickElement(firstAccount);
     }
 
     async clickRememberPassword(){

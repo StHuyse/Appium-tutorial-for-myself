@@ -28,7 +28,7 @@ exports.config = {
 
     specs: sessionConfig.keepSession
         ? ['./test/e2e/**/*.js']
-        : ['./test/specs/**/*.js'],
+        : ['./test/specs***/**/*.js'],
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
@@ -65,17 +65,17 @@ exports.config = {
         'appium:resetKeyboard': true,
         'appium:skipServerInstallation': false,
         'appium:skipDeviceInitialization': false,
-        'appium:app': './apps/Fire_Social_Media-release-v5.2.0.apk',
+        'appium:app': './apps/Fire_Social_Media-release-5.3.0.apk',
         'appium:appPackage': 'com.minhtu.firesocialmedia',
         'appium:appActivity': 'com.minhtu.firesocialmedia.android.MainActivity',
         'appium:autoGrantPermissions': true,
-        'appium:noReset': false,
+        'appium:noReset': true,
         'appium:fullReset': false,
         'appium:newCommandTimeout': 300,
         'appium:androidInstallTimeout': 90000,
         'appium:uiautomator2ServerInstallTimeout': 120000,
         'appium:uiautomator2ServerLaunchTimeout': 120000,
-        'appium:adbExecTimeout': 120000
+        'appium:adbExecTimeout': 60000
     }],
 
     //

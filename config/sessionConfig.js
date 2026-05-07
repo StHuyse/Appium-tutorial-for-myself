@@ -3,7 +3,6 @@ const mode = process.env.TEST_MODE || 'regression';
 export const sessionConfig = {
   mode,
 
-  // Single source of truth
   keepSession: mode === 'e2e',
   quitAfterTest: mode === 'regression',
 

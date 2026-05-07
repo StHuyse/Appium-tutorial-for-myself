@@ -39,15 +39,18 @@ async function runTests() {
 
   switch (choice) {
     case '1':
-      console.log('\nRunning REGRESSION tests...\n');
-      runCommand('npx wdio run wdio.conf.js', {
+      console.log('\nRunning REGRESSION tests.\n');
+      // return to the parent directory.
+      process.chdir('..');
+      runCommand('npx wdio run wdio.conf.cjs', {
         TEST_MODE: 'regression'
       });
       break;
 
     case '2':
       console.log('\nRunning E2E flow...\n');
-      runCommand('npx wdio run wdio.conf.js', {
+      process.chdir('..');
+      runCommand('npx wdio run wdio.conf.cjs', {
         TEST_MODE: 'e2e'
       });
       break;
@@ -57,33 +60,37 @@ async function runTests() {
       console.log(`\nRunning file: ${filePath}\n`);
 
       const mode = await askQuestion('Choose mode (regression/e2e): ');
-
-      runCommand(`npx wdio run wdio.conf.js --spec ${filePath}`, {
+      process.chdir('..');
+      runCommand(`npx wdio run wdio.conf.cjs --spec ${filePath}`, {
         TEST_MODE: mode || 'regression'
       });
       break;
 
     case '4':
       console.log('\ Running LOGIN tests...\n');
-      runCommand('npx wdio run wdio.conf.js --spec ./test/specs/login/**/*.js', {
+      process.chdir('..');
+      runCommand('npx wdio run wdio.conf.cjs --spec ./test/specs/login.test.js', {
         TEST_MODE: 'regression'
       });
       break;
 
     case '5':
       console.log('\nRunning SIGNUP tests...\n');
-      runCommand('npx wdio run wdio.conf.js --spec ./test/specs/signup/**/*.js', {
+      process.chdir('..');
+      runCommand('npx wdio run wdio.conf.cjs --spec ./test/specs/signup.test.js', {
         TEST_MODE: 'regression'
       });
       break;
 
     case '6':
       console.log('\nGenerating Allure report...\n');
+      process.chdir('..');
       runCommand('npx allure generate ./allure-results --clean -o ./allure-report');
       break;
 
     case '7':
       console.log('\nOpening Allure report...\n');
+      process.chdir('..');
       runCommand('npx allure open ./allure-report');
       break;
 
